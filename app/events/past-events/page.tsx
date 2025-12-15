@@ -25,7 +25,7 @@ export default function PastEventsPage() {
   const fetchPastEvents = async () => {
     const response = await fetch("../api/events?status=past")
     const res = await response.json()
-    if (response.ok) { setPastEvents(res.data)} 
+    if (response.ok) { setPastEvents(res.data.sort((a: PastEvent, b: PastEvent) => new Date(b.date).getTime() - new Date(a.date).getTime()))} 
     else { console.error("Error fetching past events:", res.error)}
   }
 

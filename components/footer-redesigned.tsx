@@ -16,7 +16,7 @@ export function FooterRedesigned() {
   const socialLinks = [
     { icon: <Mail className="h-4 w-4 md:h-5 md:w-5" />, href: "mailto:nexusvitc@gmail.com", label: "Email" },
     { icon: <Github className="h-4 w-4 md:h-5 md:w-5" />, href: "https://github.com/Nexus-VITC", label: "GitHub" },
-    { icon: <Linkedin className="h-4 w-4 md:h-5 md:w-5" />, href: "www.linkedin.com/company/nexusvitchennai/", label: "LinkedIn" },
+    { icon: <Linkedin className="h-4 w-4 md:h-5 md:w-5" />, href: "https://www.linkedin.com/company/nexusvitchennai/", label: "LinkedIn" },
     { icon: <Instagram className="h-4 w-4 md:h-5 md:w-5" />, href: "https://www.instagram.com/nexus_vitc", label: "Twitter" },
   ]
 
@@ -69,7 +69,13 @@ export function FooterRedesigned() {
             <div className="space-y-3 md:space-y-4">
               <h4 className="text-base md:text-lg font-semibold text-white">Contact</h4>
               <div className="space-y-2 text-xs md:text-sm text-gray-400">
-                <p>nexusvitc@gmail.com</p>
+                <Link 
+                  href={socialLinks[0].href}
+                  className="text-gray-40 hover:text-primary transition-colors duration-200"
+                  aria-label={socialLinks[0].label}
+                >
+                  nexusvitc@gmail.com
+                </Link>
                 
                 <p>VIT Chennai</p>
                 <h4 className="text-base md:text-lg font-semibold text-white">Faculty Coordinators</h4>

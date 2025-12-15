@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Crown, User, Linkedin, Mail, Users, Code, Palette, MessageSquare, Briefcase } from "lucide-react"
 import Image from "next/image"
 
-interface TeamMember {
+export interface TeamMember {
   id: string
   name: string
   role: string

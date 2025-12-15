@@ -41,16 +41,11 @@ export function FeaturedWorkGrid() {
   
   const fetchEvents = async () => {
     const response = await fetch("/api/events/")
-    //console.log("request submitted")
     const res = await response.json()
-    //console.log("response: ", response)
-    //console.log("result: ", res)
     if (response.ok) { 
-      //console.log("res.data: ", res.data)
       const data: Event[] = res.data
-      setPastEvents(data.filter(event => event.status === "past"))
-      setUpcomingEvents(data.filter(event => event.status === "upcoming"))
-      //console.log("Data has been set")
+      setPastEvents(data.filter(event => event.status === "past").sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()))
+      setUpcomingEvents(data.filter(event => event.status === "upcoming").sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()))
     } 
     else { console.error("Error fetching events:", res.error)}
   }
