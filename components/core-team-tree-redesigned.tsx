@@ -117,7 +117,7 @@ export function CoreTeamTreeRedesigned() {
   const MemberCard = ({ member, onClick }: { member: TeamMember; onClick: () => void }) => (
     <Card className="backdrop-panel border-primary/20 glow-hover cursor-pointer" onClick={onClick}>
       <CardContent className="p-4 text-center">
-        <div className="relative w-16 h-16 mx-auto mb-3">
+        <div className="relative w-20 h-20 mx-auto mb-3">
           {member.photo ? (
             <Image
               src={member.photo || "/placeholder.svg"}
@@ -259,7 +259,8 @@ export function CoreTeamTreeRedesigned() {
                   {selectedDepartment.leads.length > 0 && (
                     <div className="sticky top-0 bg-gradient-to-b from-[rgba(15,15,35,0.95)] to-[rgba(15,15,35,0.8)] backdrop-blur-sm z-10 pb-4">
                       <h4 className="text-base md:text-lg font-semibold text-white mb-3 md:mb-4">Department Lead</h4>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+                      {/*<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">*/}
+                      <div className="flex flex-wrap justify-center gap-3 md:gap-4">
                         {selectedDepartment.leads.map((lead) => (
                           <MemberCard
                             key={lead.id}
