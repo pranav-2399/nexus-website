@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { ArrowLeft, Calendar, ChevronLeft, ChevronRight, X, ExternalLink } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
@@ -34,94 +34,37 @@ export function GalleryEventPage({ galleryId }: GalleryEventPageProps) {
   const [isLightboxOpen, setIsLightboxOpen] = useState(false)
 
   useEffect(() => {
-    // Mock data - in real app, fetch from API based on galleryId
-    const mockGalleries: { [key: string]: GalleryEvent } = {
-      "1": {
-        id: "1",
-        title: "Annual Hackathon 2023",
-        date: "2023-11-15",
-        description: "Capturing the energy and innovation of our biggest coding event of the year.",
-        eventId: "1",
-        photos: [
-          {
-            id: "1",
-            url: "/placeholder.svg?height=600&width=800",
-            caption: "Opening ceremony with keynote speaker",
-            photographer: "Alex Johnson",
-          },
-          {
-            id: "2",
-            url: "/placeholder.svg?height=600&width=800",
-            caption: "Teams brainstorming innovative solutions",
-          },
-          {
-            id: "3",
-            url: "/placeholder.svg?height=600&width=800",
-            caption: "Intense coding session during the night",
-            photographer: "Sarah Chen",
-          },
-          {
-            id: "4",
-            url: "/placeholder.svg?height=600&width=800",
-            caption: "Mentors providing guidance to participants",
-          },
-          {
-            id: "5",
-            url: "/placeholder.svg?height=600&width=800",
-            caption: "Final presentations and judging",
-            photographer: "Michael Rodriguez",
-          },
-          {
-            id: "6",
-            url: "/placeholder.svg?height=600&width=800",
-            caption: "Winners celebrating with their trophies",
-          },
-          {
-            id: "7",
-            url: "/placeholder.svg?height=600&width=800",
-            caption: "Networking session with industry professionals",
-          },
-          {
-            id: "8",
-            url: "/placeholder.svg?height=600&width=800",
-            caption: "Team collaboration and problem-solving",
-          },
-        ],
-      },
-      "2": {
-        id: "2",
-        title: "Tech Talk Series",
-        date: "2023-10-20",
-        description: "Highlights from our engaging tech talk sessions with industry experts.",
-        eventId: "2",
-        photos: [
-          {
-            id: "9",
-            url: "/placeholder.svg?height=600&width=800",
-            caption: "AI expert discussing future trends",
-            photographer: "Emily Davis",
-          },
-          {
-            id: "10",
-            url: "/placeholder.svg?height=600&width=800",
-            caption: "Interactive Q&A session with the audience",
-          },
-          {
-            id: "11",
-            url: "/placeholder.svg?height=600&width=800",
-            caption: "Students taking notes during the presentation",
-          },
-          {
-            id: "12",
-            url: "/placeholder.svg?height=600&width=800",
-            caption: "Panel discussion on emerging technologies",
-            photographer: "David Kim",
-          },
-        ],
-      },
-    } 
+    const fetchGallery = async () => {
+      try {
+        const response = await fetch(`/api/events/fetch-event?id=${galleryId}`)
+        const res = await response.json()
 
-    setGallery(mockGalleries[galleryId] || null)
+        if (response.ok && res.data) {
+          const eventData = res.data
+          const formattedGallery: GalleryEvent = {
+            id: eventData.id,
+            title: eventData.title,
+            date: eventData.date,
+            description: eventData.description,
+            eventId: eventData.id,
+            photos: (eventData.gallery || []).map((url: string, index: number) => ({
+              id: index.toString(),
+              url: url,
+              caption: "", // Caption not available in simple gallery array
+            }))
+          }
+          setGallery(formattedGallery)
+        } else {
+          console.error("Failed to fetch gallery:", res.error)
+        }
+      } catch (error) {
+        console.error("Error fetching gallery:", error)
+      }
+    }
+
+    if (galleryId) {
+      fetchGallery()
+    }
   }, [galleryId])
 
   const openLightbox = (index: number) => {
@@ -220,6 +163,7 @@ export function GalleryEventPage({ galleryId }: GalleryEventPageProps) {
         {/* Lightbox Modal */}
         <Dialog open={isLightboxOpen} onOpenChange={setIsLightboxOpen}>
           <DialogContent className="max-w-6xl w-full h-[90vh] p-0">
+            <DialogTitle className="sr-only">Image Lightbox</DialogTitle>
             <div className="relative w-full h-full bg-black rounded-lg overflow-hidden">
               <Button
                 variant="ghost"

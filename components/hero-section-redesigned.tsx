@@ -511,8 +511,9 @@ export function HeroSectionRedesigned() {
                 <Button
                   size="lg"
                   className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white relative z-10 w-48 transition-transform duration-300 shadow-lg hover:scale-105 hover:shadow-purple-500/40"
+                  asChild
                 >
-                  Join Us
+                  <Link href="/contact/">Join Us</Link>
                 </Button>
               </motion.div>
               <motion.div
@@ -536,8 +537,9 @@ export function HeroSectionRedesigned() {
                 <Button
                   size="lg"
                   className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white transition-transform duration-300 shadow-lg hover:scale-105 hover:shadow-purple-500/40"
+                  asChild
                 >
-                  Join Us
+                  <Link href="/contact/">Join Us</Link>
                 </Button>
               </motion.div>
               <motion.div

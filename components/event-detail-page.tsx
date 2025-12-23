@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Dialog, DialogContent } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { Calendar, Clock, MapPin, Users, ExternalLink, ArrowLeft, ChevronLeft, ChevronRight, X } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
@@ -20,20 +20,20 @@ interface EventDetail {
   status: "upcoming" | "past"
   participants?: number
   outcomes?: string[]
-  stats?: { 
-    label: string; 
-    value: string 
+  stats?: {
+    label: string;
+    value: string
   }[]
   gallery?: string[]
   registrationLink?: string
-  results?: { 
-    pos: string; 
-    url: string; 
-    name: string 
+  results?: {
+    pos: string;
+    url: string;
+    name: string
   }[]
-  socialPosts?: { 
-    platform: string; 
-    url: string 
+  socialPosts?: {
+    platform: string;
+    url: string
   }[]
   slug: string
 }
@@ -53,15 +53,15 @@ export function EventDetailPage({ eventId, eventSlug }: EventDetailPageProps) {
     const response = await fetch(`/api/events/fetch-event?id=${eventId}`)
     console.log("Response status:", response)
     const res = await response.json()
-    if (response.ok) { 
+    if (response.ok) {
       setEvent(res.data)
       console.log("Cur event: ", event)
-    } 
-    else { console.error("Error fetching event:", res.error)}
+    }
+    else { console.error("Error fetching event:", res.error) }
   }
 
   useEffect(() => {
-    if (eventId) {fetchEvent()}
+    if (eventId) { fetchEvent() }
   }, [eventId])
 
   const openGallery = (index: number) => {
@@ -334,6 +334,7 @@ export function EventDetailPage({ eventId, eventSlug }: EventDetailPageProps) {
       {/* Gallery Modal */}
       <Dialog open={isGalleryOpen} onOpenChange={setIsGalleryOpen}>
         <DialogContent className="max-w-4xl w-full h-[80vh] p-0">
+          <DialogTitle className="sr-only">Event Gallery</DialogTitle>
           {event.gallery && (
             <div className="relative w-full h-full bg-black rounded-lg overflow-hidden">
               <Button

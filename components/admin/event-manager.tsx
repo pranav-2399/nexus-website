@@ -33,11 +33,11 @@ interface Event {
   isPinned: boolean
   status: "upcoming" | "past"
   gallery?: string[]
-  stats?: {label: string; value: string} []
+  stats?: { label: string; value: string }[]
   participants?: string
   outcomes?: string[]
-  socialPosts?: {platform: string; url: string} []
-  results?: {pos: string; name: string; url: string}[]
+  socialPosts?: { platform: string; url: string }[]
+  results?: { pos: string; name: string; url: string }[]
   registrationLink?: string
 }
 
@@ -57,8 +57,8 @@ export function EventManager() {
     stats?: { label: string; value: string }[]
     participants?: string
     outcomes?: string[]
-    socialPosts?: {platform: string; url: string} []
-    results?: {pos: string; name: string; url: string}[]
+    socialPosts?: { platform: string; url: string }[]
+    results?: { pos: string; name: string; url: string }[]
     registrationLink?: string
   }>({
     title: "",
@@ -82,7 +82,7 @@ export function EventManager() {
     const res = await response.json()
 
     if (response.ok) {
-      setEvents(res.data)
+      setEvents(res.data.sort((a: Event, b: Event) => new Date(b.date).getTime() - new Date(a.date).getTime()))
     } else {
       console.error("Error fetching events:", res.error)
     }
@@ -194,8 +194,8 @@ export function EventManager() {
 
   const handleDelete = async (event: Event) => {
 
-    if (event.bannerImage){ await deleteImage(event.bannerImage)}
-    if (event.gallery) { await Promise.all(event.gallery.map((img) => deleteImage(img)))}
+    if (event.bannerImage) { await deleteImage(event.bannerImage) }
+    if (event.gallery) { await Promise.all(event.gallery.map((img) => deleteImage(img))) }
 
     const response = await fetch(`/api/events/delete?id=${event.id}`, {
       method: "DELETE",
@@ -232,7 +232,7 @@ export function EventManager() {
     } catch (error) {
       console.error("Image upload failed:", error)
       toast({ title: "Failed to upload image", variant: "destructive" })
-    }    
+    }
   }
 
   const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -247,9 +247,10 @@ export function EventManager() {
         method: "POST",
         body: formData,
       })
-
       const data = await res.json()
-      if (data.urls) { setFormData(prev => ({ ...prev, gallery: [...(prev.gallery ?? []), ...data.urls]}))}
+      console.log(data)
+      if (data.urls) { setFormData(prev => ({ ...prev, gallery: [...(prev.gallery ?? []), ...data.urls] })) }
+      console.log(formData)
     } catch (err) {
       console.error("Gallery upload failed:", err)
       toast({ title: "Failed to upload images", variant: "destructive" })
@@ -279,7 +280,7 @@ export function EventManager() {
     }
   }
 
-  
+
   const isPast = new Date(`${formData.date}T${formData.time}`) < new Date()
   return (
     <div className="space-y-6">
@@ -505,7 +506,7 @@ export function EventManager() {
                         rows={3}
                       />
                     </div>
-                    
+
                     {/* Social Posts */}
                     <div className="space-y-2">
                       <Label>Social Posts</Label>
@@ -564,7 +565,7 @@ export function EventManager() {
                         + Add Platform
                       </Button>
                     </div>
-                    
+
                     {/* Results */}
                     <div className="space-y-2">
                       <Label>Results</Label>
@@ -641,17 +642,17 @@ export function EventManager() {
                       <div className="flex flex-wrap gap-3">
                         {formData.gallery?.map((img, index) => (
                           <div key={index} className="relative group">
-                            <img 
+                            <img
                               src={img}
                               alt={`Gallery ${index}`}
-                              className="h-24 w-24 object-cover rounded-md" 
+                              className="h-24 w-24 object-cover rounded-md"
                             />
                             <button
                               type="button"
                               onClick={async () => {
                                 await deleteImage(img)
                                 console.log(img)
-                                setFormData((prev) => ({ ...prev, gallery: prev.gallery?.filter((image) => image !== img)}))
+                                setFormData((prev) => ({ ...prev, gallery: prev.gallery?.filter((image) => image !== img) }))
                               }}
                               className="absolute top-1 right-1 bg-black bg-opacity-60 p-1 rounded-full hidden group-hover:block"
                             >
