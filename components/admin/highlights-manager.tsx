@@ -19,13 +19,13 @@ import {
 } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
-import { Plus, Edit, Trash2, Calendar } from "lucide-react"
+import { Plus, Edit, Trash2, Calendar, Instagram, Linkedin } from "lucide-react"
 
 interface Highlight {
   id: string
   title: string
   description: string
-  type: "Event" | "Magazine" | "Update"
+  type: "Event" | "Magazine" | "Update" | "Instagram" | "LinkedIn"
   date: string
   thumbnail?: string
   link?: string
@@ -38,7 +38,7 @@ export function HighlightsManager() {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    type: "Event" as "Event" | "Magazine" | "Update",
+    type: "Event" as "Event" | "Magazine" | "Update" | "Instagram" | "LinkedIn",
     date: "",
     thumbnail: "",
     link: "",
@@ -135,8 +135,25 @@ export function HighlightsManager() {
         return "bg-green-500/10 text-green-500 border-green-500/20"
       case "Update":
         return "bg-purple-500/10 text-purple-500 border-purple-500/20"
+      case "Instagram":
+        return "bg-pink-500/10 text-pink-500 border-pink-500/20"
+      case "LinkedIn":
+        return "bg-blue-600/10 text-blue-600 border-blue-600/20"
       default:
         return "bg-gray-500/10 text-gray-500 border-gray-500/20"
+    }
+  }
+
+  const getTypeIcon = (type: string) => {
+    switch (type) {
+      case "Instagram":
+        return <Instagram className="h-4 w-4" />
+      case "LinkedIn":
+        return <Linkedin className="h-4 w-4" />
+      case "Event":
+        return <Calendar className="h-4 w-4" />
+      default:
+        return null
     }
   }
 
@@ -177,17 +194,19 @@ export function HighlightsManager() {
                   <Label htmlFor="type">Type *</Label>
                   <Select
                     value={formData.type}
-                    onValueChange={(value: "Event" | "Magazine" | "Update") =>
+                    onValueChange={(value: "Event" | "Magazine" | "Update" | "Instagram" | "LinkedIn") =>
                       setFormData((prev) => ({ ...prev, type: value }))
                     }
                   >
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="Select type" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="z-50">
                       <SelectItem value="Event">Event</SelectItem>
                       <SelectItem value="Magazine">Magazine</SelectItem>
                       <SelectItem value="Update">Update</SelectItem>
+                      <SelectItem value="Instagram">Instagram</SelectItem>
+                      <SelectItem value="LinkedIn">LinkedIn</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -256,6 +275,7 @@ export function HighlightsManager() {
             <CardHeader>
               <div className="flex items-center justify-between mb-2">
                 <Badge variant="outline" className={getTypeColor(highlight.type)}>
+                  {getTypeIcon(highlight.type)}
                   {highlight.type}
                 </Badge>
                 <div className="flex items-center text-sm text-muted-foreground">
@@ -285,6 +305,6 @@ export function HighlightsManager() {
           </Card>
         ))}
       </div>
-    </div>
+    </div >
   )
 }
