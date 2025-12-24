@@ -141,7 +141,7 @@ export function EventDetailPage({ eventId, eventSlug }: EventDetailPageProps) {
                 <Clock className="h-5 w-5" />
                 <span>{event.time}</span>
               </div>
-              {event.location && (
+              {event.location && event.location.trim() && (
                 <div className="flex items-center gap-2">
                   <MapPin className="h-5 w-5" />
                   <span>{event.location}</span>
@@ -171,12 +171,12 @@ export function EventDetailPage({ eventId, eventSlug }: EventDetailPageProps) {
             </Card>
 
             {/* Outcomes (for past events) */}
-            {event.outcomes && isPast && (
+            {event.outcomes && event.outcomes.filter(outcome => outcome && outcome.trim()).length > 0 && isPast && (
               <Card className="backdrop-panel border-primary/20">
                 <CardContent className="p-6 md:p-8">
                   <h2 className="text-2xl font-bold gradient-text mb-4">Event Outcomes</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {event.outcomes.map((outcome, index) => (
+                    {event.outcomes.filter(outcome => outcome && outcome.trim()).map((outcome, index) => (
                       <div key={index} className="flex items-start gap-3">
                         <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
                         <span className="text-gray-300">{outcome}</span>
@@ -226,12 +226,12 @@ export function EventDetailPage({ eventId, eventSlug }: EventDetailPageProps) {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Stats */}
-            {event.stats && (
+            {event.stats && event.stats.filter(stat => stat.label && stat.label.trim() && stat.value && stat.value.trim()).length > 0 && (
               <Card className="backdrop-panel border-primary/20">
                 <CardContent className="p-6">
                   <h3 className="text-lg font-bold gradient-text mb-4">Event Stats</h3>
                   <div className="space-y-4">
-                    {event.stats.map((stat, index) => (
+                    {event.stats.filter(stat => stat.label && stat.label.trim() && stat.value && stat.value.trim()).map((stat, index) => (
                       <div key={index} className="flex justify-between items-center">
                         <span className="text-gray-300">{stat.label}</span>
                         <span className="text-primary font-bold">{stat.value}</span>
@@ -243,7 +243,7 @@ export function EventDetailPage({ eventId, eventSlug }: EventDetailPageProps) {
             )}
 
             {/* Participants (for past events) */}
-            {event.participants && (
+            {event.participants && event.participants > 0 && (
               <Card className="backdrop-panel border-primary/20">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-3 mb-2">
@@ -257,7 +257,7 @@ export function EventDetailPage({ eventId, eventSlug }: EventDetailPageProps) {
             )}
 
             {/* Registration (for upcoming events) */}
-            {event.registrationLink && (
+            {event.registrationLink && event.registrationLink.trim() && (
               <Card className="backdrop-panel border-primary/20">
                 <CardContent className="p-6">
                   <h3 className="text-lg font-bold gradient-text mb-4">Registration</h3>
@@ -272,7 +272,7 @@ export function EventDetailPage({ eventId, eventSlug }: EventDetailPageProps) {
             )}
 
             {/* Resources/Results */}
-            {event.results && isPast && (
+            {event.results && event.results.filter(r => r.pos && r.name && r.name.trim()).length > 0 && isPast && (
               <Card className="backdrop-panel border-primary/20">
                 <CardContent className="p-6">
                   <h3 className="text-lg font-bold gradient-text mb-4">Results</h3>
@@ -287,7 +287,7 @@ export function EventDetailPage({ eventId, eventSlug }: EventDetailPageProps) {
                         </tr>
                       </thead>
                       <tbody>
-                        {event.results.map((result, index) => (
+                        {event.results.filter(r => r.pos && r.name && r.name.trim()).map((result, index) => (
                           <tr key={index} className="border-b border-muted/10">
                             <td className="py-2 px-4 font-medium">{result.pos}</td>
                             <td className="py-2 px-4">{result.name}</td>
@@ -310,12 +310,12 @@ export function EventDetailPage({ eventId, eventSlug }: EventDetailPageProps) {
             )}
 
             {/* Social Posts */}
-            {event.socialPosts && (
+            {event.socialPosts && event.socialPosts.filter(p => p.platform && p.platform.trim() && p.url && p.url.trim()).length > 0 && (
               <Card className="backdrop-panel border-primary/20">
                 <CardContent className="p-6">
                   <h3 className="text-lg font-bold gradient-text mb-4">Social Media</h3>
                   <div className="space-y-2">
-                    {event.socialPosts.map((post, index) => (
+                    {event.socialPosts.filter(p => p.platform && p.platform.trim() && p.url && p.url.trim()).map((post, index) => (
                       <Button key={index} variant="outline" className="w-full justify-start" size="sm" asChild>
                         <a href={post.url} target="_blank" rel="noopener noreferrer">
                           <ExternalLink className="h-4 w-4 mr-2" />

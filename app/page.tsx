@@ -14,7 +14,6 @@ export default function HomePage() {
         <TechShowcaseSection />
         <CoreTeamTreeRedesigned />
         <FromTheDesk />
-        <FooterRedesigned />
       </div>
     </div>
   )

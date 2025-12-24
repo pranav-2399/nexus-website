@@ -27,8 +27,8 @@ export default function UpcomingEventsPage() {
   const fetchUpcomingEvents = async () => {
     const response = await fetch("../api/events?status=upcoming")
     const res = await response.json()
-    if (response.ok) { setUpcomingEvents(res.data)} 
-    else { console.error("Error fetching upcoming events:", res.error)}
+    if (response.ok) { setUpcomingEvents(res.data) }
+    else { console.error("Error fetching upcoming events:", res.error) }
   }
 
   useEffect(() => {
@@ -66,13 +66,13 @@ export default function UpcomingEventsPage() {
         {/* Header */}
         <div className="relative mb-8">
           <Link href="/events">
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               className="backdrop-panel border-primary/30 absolute left-0 top-0"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Home
+              Back to Events Page
             </Button>
           </Link>
           <div className="text-center">
@@ -86,11 +86,11 @@ export default function UpcomingEventsPage() {
           {upcomingEvents.map((event) => (
             <Card key={event.id} className="backdrop-panel border-primary/20 glow-effect overflow-hidden">
               <div className="relative h-64 overflow-hidden">
-                <Image 
-                  src={event.bannerImage || "/placeholder.svg"} 
-                  alt={event.title} 
-                  fill 
-                  className="object-cover" 
+                <Image
+                  src={event.bannerImage || "/placeholder.svg"}
+                  alt={event.title}
+                  fill
+                  className="object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                 <div className="absolute top-4 left-4">

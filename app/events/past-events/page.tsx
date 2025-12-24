@@ -25,8 +25,8 @@ export default function PastEventsPage() {
   const fetchPastEvents = async () => {
     const response = await fetch("../api/events?status=past")
     const res = await response.json()
-    if (response.ok) { setPastEvents(res.data.sort((a: PastEvent, b: PastEvent) => new Date(b.date).getTime() - new Date(a.date).getTime()))} 
-    else { console.error("Error fetching past events:", res.error)}
+    if (response.ok) { setPastEvents(res.data.sort((a: PastEvent, b: PastEvent) => new Date(b.date).getTime() - new Date(a.date).getTime())) }
+    else { console.error("Error fetching past events:", res.error) }
   }
 
   useEffect(() => {
@@ -39,13 +39,13 @@ export default function PastEventsPage() {
         {/* Header */}
         <div className="relative mb-8">
           <Link href="/events">
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               className="backdrop-panel border-primary/30 absolute left-0 top-0"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Home
+              Back to Events Page
             </Button>
           </Link>
           <div className="text-center">

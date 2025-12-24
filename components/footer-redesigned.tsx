@@ -21,7 +21,7 @@ export function FooterRedesigned() {
   ]
 
   return (
-    <footer className="relative mt-12 md:mt-20">
+    <footer className="relative">
       <div className="backdrop-panel border-t border-primary/20">
         <div className="container mx-auto px-4 py-8 md:py-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
@@ -69,20 +69,20 @@ export function FooterRedesigned() {
             <div className="space-y-3 md:space-y-4">
               <h4 className="text-base md:text-lg font-semibold text-white">Contact</h4>
               <div className="space-y-2 text-xs md:text-sm text-gray-400">
-                <Link 
+                <Link
                   href={socialLinks[0].href}
                   className="text-gray-40 hover:text-primary transition-colors duration-200"
                   aria-label={socialLinks[0].label}
                 >
                   nexusvitc@gmail.com
                 </Link>
-                
+
                 <p>VIT Chennai</p>
                 <h4 className="text-base md:text-lg font-semibold text-white">Faculty Coordinators</h4>
                 <p>Dr. S. Pavithra</p>
                 <p>Dr. Lekshmi K</p>
-                
-               
+
+
               </div>
             </div>
           </div>

@@ -5,6 +5,7 @@ import "./globals.css"
 import { FloatingNav } from "@/components/floating-nav"
 import { GlobalBackground } from "@/components/global-background"
 import { LoadingScreen } from "@/components/loading-screen"
+import { FooterRedesigned } from "@/components/footer-redesigned"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -25,6 +26,7 @@ export default function RootLayout({
         <GlobalBackground />
         <FloatingNav />
         {children}
+        <FooterRedesigned />
       </body>
     </html>
   )
