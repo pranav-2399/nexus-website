@@ -5,7 +5,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
-import { Calendar, Clock, MapPin, Users, ExternalLink, ArrowLeft, ChevronLeft, ChevronRight, X } from "lucide-react"
+import { Calendar, Clock, MapPin, Users, ExternalLink, ArrowLeft, X, Maximize2, Copy, Check } from "lucide-react"
+import { Lightbox } from "@/components/lightbox"
 import Image from "next/image"
 import Link from "next/link"
 
@@ -24,6 +25,7 @@ interface EventDetail {
     label: string;
     value: string
   }[]
+  posterImage?: string
   gallery?: string[]
   registrationLink?: string
   results?: {
@@ -47,6 +49,8 @@ export function EventDetailPage({ eventId, eventSlug }: EventDetailPageProps) {
   const [event, setEvent] = useState<EventDetail | null>(null)
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [isGalleryOpen, setIsGalleryOpen] = useState(false)
+  const [isPosterOpen, setIsPosterOpen] = useState(false)
+  const [isCopied, setIsCopied] = useState(false)
 
   const fetchEvent = async () => {
     console.log("Fetching event with ID:", eventId)
@@ -69,15 +73,45 @@ export function EventDetailPage({ eventId, eventSlug }: EventDetailPageProps) {
     setIsGalleryOpen(true)
   }
 
-  const nextImage = () => {
-    if (event?.gallery) {
-      setSelectedImageIndex((prev) => (prev === event.gallery!.length - 1 ? 0 : prev + 1))
-    }
-  }
+  const handleCopyPoster = async () => {
+    if (event?.posterImage) {
+      try {
+        const response = await fetch(event.posterImage)
+        const blob = await response.blob()
 
-  const prevImage = () => {
-    if (event?.gallery) {
-      setSelectedImageIndex((prev) => (prev === 0 ? event.gallery!.length - 1 : prev - 1))
+        // Clipboard API often only supports PNG, so we convert if needed
+        const img = document.createElement('img')
+        img.src = URL.createObjectURL(blob)
+
+        await new Promise((resolve) => {
+          img.onload = resolve
+        })
+
+        const canvas = document.createElement('canvas')
+        canvas.width = img.naturalWidth
+        canvas.height = img.naturalHeight
+        const ctx = canvas.getContext('2d')
+        ctx?.drawImage(img, 0, 0)
+
+        canvas.toBlob(async (pngBlob) => {
+          if (pngBlob) {
+            try {
+              await navigator.clipboard.write([
+                new ClipboardItem({
+                  'image/png': pngBlob,
+                }),
+              ])
+              setIsCopied(true)
+              setTimeout(() => setIsCopied(false), 2000)
+            } catch (err) {
+              console.error("Failed to write to clipboard:", err)
+            }
+          }
+        }, 'image/png')
+
+      } catch (err) {
+        console.error("Failed to copy image:", err)
+      }
     }
   }
 
@@ -205,7 +239,9 @@ export function EventDetailPage({ eventId, eventSlug }: EventDetailPageProps) {
                           fill
                           className="object-cover group-hover:scale-105 transition-transform duration-300"
                         />
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+                          <Maximize2 className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -225,6 +261,29 @@ export function EventDetailPage({ eventId, eventSlug }: EventDetailPageProps) {
 
           {/* Sidebar */}
           <div className="space-y-6">
+            {/* Event Poster */}
+            {event.posterImage && (
+              <Card className="backdrop-panel border-primary/20">
+                <CardContent className="p-6">
+                  <h3 className="text-lg font-bold gradient-text mb-4">Event Poster</h3>
+                  <div
+                    className="relative aspect-[3/4] rounded-lg overflow-hidden cursor-pointer group"
+                    onClick={() => setIsPosterOpen(true)}
+                  >
+                    <Image
+                      src={event.posterImage}
+                      alt="Event Poster"
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+                      <Maximize2 className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Stats */}
             {event.stats && event.stats.filter(stat => stat.label && stat.label.trim() && stat.value && stat.value.trim()).length > 0 && (
               <Card className="backdrop-panel border-primary/20">
@@ -332,55 +391,62 @@ export function EventDetailPage({ eventId, eventSlug }: EventDetailPageProps) {
       </div>
 
       {/* Gallery Modal */}
-      <Dialog open={isGalleryOpen} onOpenChange={setIsGalleryOpen}>
-        <DialogContent className="max-w-4xl w-full h-[80vh] p-0">
-          <DialogTitle className="sr-only">Event Gallery</DialogTitle>
-          {event.gallery && (
-            <div className="relative w-full h-full bg-black rounded-lg overflow-hidden">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="absolute top-4 right-4 z-10 text-white hover:bg-white/20"
-                onClick={() => setIsGalleryOpen(false)}
-              >
-                <X className="h-4 w-4" />
-              </Button>
+      {/* Gallery Modal */}
+      {event.gallery && (
+        <Lightbox
+          open={isGalleryOpen}
+          onOpenChange={setIsGalleryOpen}
+          images={event.gallery}
+          title={event.title}
+          date={new Date(event.date).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}
+          initialIndex={selectedImageIndex}
+        />
+      )}
 
+      {/* Poster Modal */}
+      {/* Poster Modal */}
+      <Dialog open={isPosterOpen} onOpenChange={setIsPosterOpen}>
+        <DialogContent className="max-w-5xl w-full h-[90vh] p-0 overflow-hidden bg-black border-none flex flex-col z-[150]">
+          <DialogTitle className="sr-only">Event Poster</DialogTitle>
+          <div className="relative flex-1 min-h-0 w-full bg-black">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute top-4 right-4 z-50 text-white hover:bg-white/20 rounded-full"
+              onClick={() => setIsPosterOpen(false)}
+            >
+              <X className="h-6 w-6" />
+            </Button>
+            {event.posterImage && (
               <div className="relative w-full h-full">
                 <Image
-                  src={event.gallery[selectedImageIndex] || "/placeholder.svg"}
-                  alt={`Gallery image ${selectedImageIndex + 1}`}
+                  src={event.posterImage}
+                  alt="Event Poster"
                   fill
                   className="object-contain"
+                  priority
                 />
               </div>
-
-              {event.gallery.length > 1 && (
-                <>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/20"
-                    onClick={prevImage}
-                  >
-                    <ChevronLeft className="h-6 w-6" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/20"
-                    onClick={nextImage}
-                  >
-                    <ChevronRight className="h-6 w-6" />
-                  </Button>
-
-                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white text-sm bg-black/50 px-3 py-1 rounded">
-                    {selectedImageIndex + 1} / {event.gallery.length}
-                  </div>
-                </>
-              )}
+            )}
+            {/* Info Overlay */}
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-6 flex justify-center items-end pointer-events-none">
+              <div className="pointer-events-auto">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="backdrop-blur-md bg-white/10 hover:bg-white/20 text-white border-white/20"
+                  onClick={handleCopyPoster}
+                >
+                  {isCopied ? <Check className="h-4 w-4 mr-2" /> : <Copy className="h-4 w-4 mr-2" />}
+                  {isCopied ? "Copied Image" : "Copy Image"}
+                </Button>
+              </div>
             </div>
-          )}
+          </div>
         </DialogContent>
       </Dialog>
     </div>

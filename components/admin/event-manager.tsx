@@ -30,6 +30,7 @@ interface Event {
   time: string
   location: string
   bannerImage?: string
+  posterImage?: string
   isPinned: boolean
   status: "upcoming" | "past"
   gallery?: string[]
@@ -52,6 +53,7 @@ export function EventManager() {
     time: string
     location: string
     bannerImage?: string
+    posterImage?: string
     isPinned: boolean
     gallery?: string[]
     stats?: { label: string; value: string }[]
@@ -67,6 +69,7 @@ export function EventManager() {
     time: "",
     location: "",
     bannerImage: "",
+    posterImage: "",
     isPinned: false,
     gallery: [],
     stats: [],
@@ -102,6 +105,7 @@ export function EventManager() {
       time: formData.time,
       location: formData.location,
       bannerImage: formData.bannerImage || null,
+      posterImage: formData.posterImage || null,
       isPinned: formData.isPinned,
       status: new Date(`${formData.date} ${formData.time}`) > new Date() ? "upcoming" : "past",
       gallery: formData.gallery ?? [],
@@ -146,6 +150,7 @@ export function EventManager() {
       time: "",
       location: "",
       bannerImage: "",
+      posterImage: "",
       isPinned: false,
       gallery: [],
       stats: [],
@@ -168,6 +173,7 @@ export function EventManager() {
       time: event.time || "",
       location: event.location || "",
       bannerImage: event.bannerImage || "",
+      posterImage: event.posterImage || "",
       isPinned: event.isPinned || false,
       gallery: event.gallery ?? [],
       stats: event.stats ?? [],
@@ -212,14 +218,25 @@ export function EventManager() {
     }
   }
 
-  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  type ImageType = "banner" | "poster"
+
+  const handleImageChange = (type: ImageType) => async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
-    await deleteImage(formData.bannerImage)
+    const imageKey = type === "banner" ? "bannerImage" : "posterImage"
+
+    try {
+      await deleteImage(formData[imageKey])
+    } catch (error) {
+      console.error("failed to delete existing image", error)
+    }
+    /* await deleteImage(formData.bannerImage) */
 
     const formDataUpload = new FormData()
     formDataUpload.append("file", file)
+    formDataUpload.append("type", type)
+
     try {
       const response = await fetch("/api/events/upload-image", {
         method: "POST",
@@ -227,7 +244,7 @@ export function EventManager() {
       })
       const data = await response.json()
       if (data.url) {
-        setFormData((prev) => ({ ...prev, bannerImage: data.url }))
+        setFormData((prev) => ({ ...prev, [imageKey]: data.url }))
       }
     } catch (error) {
       console.error("Image upload failed:", error)
@@ -471,7 +488,38 @@ export function EventManager() {
                     id="upload"
                     type="file"
                     accept="image/*"
-                    onChange={handleImageChange}
+                    onChange={handleImageChange("banner")}
+                  />
+                </div>
+
+                {/* Poster Image */}
+                <div className="space-y-2">
+                  <Label htmlFor="upload">Upload Poster Image</Label>
+                  {formData.posterImage && (
+                    <div className="relative w-full max-w-sm">
+                      <img
+                        src={formData.posterImage}
+                        alt="Poster Preview"
+                        className="w-full rounded shadow"
+                      />
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          await deleteImage(formData.posterImage)
+                          setFormData((prev) => ({ ...prev, posterImage: "" }))
+                        }}
+                        className="absolute top-2 right-2 bg-white p-1 rounded-full shadow hover:bg-red-100"
+                        title="Delete Image"
+                      >
+                        <Trash2 className="w-5 h-5 text-red-500" />
+                      </button>
+                    </div>
+                  )}
+                  <Input
+                    id="upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange("poster")}
                   />
                 </div>
 
