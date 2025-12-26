@@ -30,9 +30,8 @@ export function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        scrolled ? "backdrop-panel shadow-lg" : "bg-transparent"
-      }`}
+      className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? "backdrop-panel shadow-lg" : "bg-black/40 backdrop-blur-md border-b border-white/5"
+        }`}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
@@ -48,21 +47,19 @@ export function Navbar() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => {
-              const isActive = pathname === item.href || 
+              const isActive = pathname === item.href ||
                 (item.href.startsWith('/#') && pathname === '/' && window.location.hash === item.href.substring(1))
-              
+
               return (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`text-gray-300 hover:text-primary transition-colors duration-200 relative group ${
-                    isActive ? "text-primary" : ""
-                  }`}
+                  className={`text-gray-300 hover:text-primary transition-colors duration-200 relative group ${isActive ? "text-primary" : ""
+                    }`}
                 >
                   {item.name}
-                  <span className={`absolute -bottom-1 left-0 h-0.5 bg-primary transition-all duration-300 ${
-                    isActive ? "w-full" : "w-0 group-hover:w-full"
-                  }`}></span>
+                  <span className={`absolute -bottom-1 left-0 h-0.5 bg-primary transition-all duration-300 ${isActive ? "w-full" : "w-0 group-hover:w-full"
+                    }`}></span>
                 </Link>
               )
             })}
@@ -72,32 +69,31 @@ export function Navbar() {
           <div className="md:hidden">
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+                <Button
+                  variant="ghost"
+                  size="sm"
                   className="text-gray-300 hover:text-primary transition-colors duration-200"
                 >
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent 
-                side="right" 
+              <SheetContent
+                side="right"
                 className="backdrop-panel border-primary/20 w-[280px] sm:w-[350px]"
               >
                 <div className="flex flex-col space-y-6 mt-8">
                   {navItems.map((item) => {
-                    const isActive = pathname === item.href || 
+                    const isActive = pathname === item.href ||
                       (item.href.startsWith('/#') && pathname === '/' && window.location.hash === item.href.substring(1))
-                    
+
                     return (
                       <Link
                         key={item.name}
                         href={item.href}
-                        className={`text-lg transition-colors duration-200 py-2 ${
-                          isActive 
-                            ? "text-primary" 
+                        className={`text-lg transition-colors duration-200 py-2 ${isActive
+                            ? "text-primary"
                             : "text-gray-300 hover:text-primary"
-                        }`}
+                          }`}
                         onClick={() => setIsOpen(false)}
                       >
                         {item.name}

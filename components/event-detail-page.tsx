@@ -51,6 +51,16 @@ export function EventDetailPage({ eventId, eventSlug }: EventDetailPageProps) {
   const [isGalleryOpen, setIsGalleryOpen] = useState(false)
   const [isPosterOpen, setIsPosterOpen] = useState(false)
   const [isCopied, setIsCopied] = useState(false)
+  const [isSticky, setIsSticky] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Adjust threshold as needed based on banner height
+      setIsSticky(window.scrollY > 150)
+    }
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
 
   const fetchEvent = async () => {
     console.log("Fetching event with ID:", eventId)
@@ -96,11 +106,7 @@ export function EventDetailPage({ eventId, eventSlug }: EventDetailPageProps) {
         canvas.toBlob(async (pngBlob) => {
           if (pngBlob) {
             try {
-              await navigator.clipboard.write([
-                new ClipboardItem({
-                  'image/png': pngBlob,
-                }),
-              ])
+              await navigator.clipboard.write([new ClipboardItem({ 'image/png': pngBlob })])
               setIsCopied(true)
               setTimeout(() => setIsCopied(false), 2000)
             } catch (err) {
@@ -134,14 +140,14 @@ export function EventDetailPage({ eventId, eventSlug }: EventDetailPageProps) {
   const isPast = new Date(`${event.date}T${event.time}`) < new Date()
 
   return (
-    <div className="pt-16 min-h-screen">
+    <div className="min-h-screen">
       {/* Banner Section */}
       <div className="relative h-64 md:h-96 overflow-hidden">
         <Image src={event.bannerImage || "/placeholder.svg"} alt={event.title} fill className="object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
         {/* Back Button */}
-        <div className="absolute top-4 left-4 z-10">
+        <div className="absolute top-24 left-4 z-10">
           <Link href={event.status === "past" ? "/events/past-events" : "/events/upcoming"}>
             <Button variant="outline" size="sm" className="backdrop-panel border-primary/30">
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -150,38 +156,43 @@ export function EventDetailPage({ eventId, eventSlug }: EventDetailPageProps) {
           </Link>
         </div>
 
-        {/* Event Title Overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8">
-          <div className="container mx-auto">
-            <Badge
-              variant="outline"
-              className={`mb-4 ${event.status === "upcoming" ? "border-green-500 text-green-400" : "border-blue-500 text-blue-400"}`}
-            >
-              {event.status === "upcoming" ? "Upcoming Event" : "Past Event"}
-            </Badge>
-            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">{event.title}</h1>
-            <div className="flex flex-wrap gap-4 text-gray-300">
-              <div className="flex items-center gap-2">
-                <Calendar className="h-5 w-5" />
-                <span>
-                  {new Date(event.date).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock className="h-5 w-5" />
-                <span>{event.time}</span>
-              </div>
-              {event.location && event.location.trim() && (
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-5 w-5" />
-                  <span>{event.location}</span>
-                </div>
-              )}
+        {/* Event Title Overlay - Moved below to handle sticky */}
+      </div>
+
+      {/* Sticky Event Title Bar */}
+      <div
+        className={`sticky top-0 z-30 w-full -mt-24 md:-mt-32 pb-4 pt-4 md:pt-8 md:pb-8 border-b transition-all duration-500 pointer-events-none
+        ${isSticky ? "bg-black/60 backdrop-blur-md border-white/5" : "bg-transparent backdrop-blur-none border-transparent"}`}
+      >
+        <div className="container mx-auto px-4 md:px-8 pointer-events-auto">
+          <Badge
+            variant="outline"
+            className={`mb-4 shadow-lg bg-black/50 backdrop-blur-md ${event.status === "upcoming" ? "border-green-500 text-green-400" : "border-blue-500 text-blue-400"}`}
+          >
+            {event.status === "upcoming" ? "Upcoming Event" : "Past Event"}
+          </Badge>
+          <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg">{event.title}</h1>
+          <div className="flex flex-wrap gap-4 text-gray-200">
+            <div className="flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-primary" />
+              <span>
+                {new Date(event.date).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </span>
             </div>
+            <div className="flex items-center gap-2">
+              <Clock className="h-5 w-5 text-primary" />
+              <span>{event.time}</span>
+            </div>
+            {event.location && event.location.trim() && (
+              <div className="flex items-center gap-2">
+                <MapPin className="h-5 w-5 text-primary" />
+                <span>{event.location}</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -410,7 +421,7 @@ export function EventDetailPage({ eventId, eventSlug }: EventDetailPageProps) {
       {/* Poster Modal */}
       {/* Poster Modal */}
       <Dialog open={isPosterOpen} onOpenChange={setIsPosterOpen}>
-        <DialogContent className="max-w-5xl w-full h-[90vh] p-0 overflow-hidden bg-black border-none flex flex-col z-[150]">
+        <DialogContent className="max-w-5xl w-full h-[90vh] p-0 overflow-hidden bg-black border-none flex flex-col z-[150]" hideCloseButton>
           <DialogTitle className="sr-only">Event Poster</DialogTitle>
           <div className="relative flex-1 min-h-0 w-full bg-black">
             <Button

@@ -43,7 +43,7 @@ export function FloatingNav() {
           "hidden md:flex fixed top-4 left-1/2 -translate-x-1/2 z-[55] px-6 py-3 rounded-full transition-all duration-300",
           isScrolled
             ? "bg-white/10 backdrop-blur-lg shadow-lg border border-white/20"
-            : "bg-transparent"
+            : "bg-black/40 backdrop-blur-md border border-white/5"
         )}
       >
         <div className="flex items-center gap-8">
