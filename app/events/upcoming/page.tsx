@@ -72,7 +72,7 @@ export default function UpcomingEventsPage() {
               className="backdrop-panel border-primary/30 absolute left-0 top-0"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Events Page
+              Back to Events
             </Button>
           </Link>
           <div className="text-center">

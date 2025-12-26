@@ -55,7 +55,6 @@ export function EventDetailPage({ eventId, eventSlug }: EventDetailPageProps) {
 
   useEffect(() => {
     const handleScroll = () => {
-      // Adjust threshold as needed based on banner height
       setIsSticky(window.scrollY > 150)
     }
     window.addEventListener("scroll", handleScroll)
@@ -146,10 +145,10 @@ export function EventDetailPage({ eventId, eventSlug }: EventDetailPageProps) {
         <Image src={event.bannerImage || "/placeholder.svg"} alt={event.title} fill className="object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
-        {/* Back Button */}
-        <div className="absolute top-24 left-4 z-10">
+        {/* Fixed Floating Back Button */}
+        <div className="fixed top-12 left-4 z-50">
           <Link href={event.status === "past" ? "/events/past-events" : "/events/upcoming"}>
-            <Button variant="outline" size="sm" className="backdrop-panel border-primary/30">
+            <Button variant="outline" size="sm" className="backdrop-blur-md bg-black/40 border-primary/30 text-white hover:bg-black/60">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back
             </Button>
@@ -161,9 +160,17 @@ export function EventDetailPage({ eventId, eventSlug }: EventDetailPageProps) {
 
       {/* Sticky Event Title Bar */}
       <div
-        className={`sticky top-0 z-30 w-full -mt-24 md:-mt-32 pb-4 pt-4 md:pt-8 md:pb-8 border-b transition-all duration-500 pointer-events-none
-        ${isSticky ? "bg-black/60 backdrop-blur-md border-white/5" : "bg-transparent backdrop-blur-none border-transparent"}`}
+        className="sticky top-0 z-30 w-full -mt-24 md:-mt-32 pb-4 pt-4 md:pt-8 md:pb-8 transition-all duration-500 pointer-events-none"
       >
+        {/* Organic Background Layer */}
+        <div
+          className={`absolute inset-0 -z-10 transition-all duration-500
+            ${isSticky
+              ? "bg-black/60 backdrop-blur-md [mask-image:linear-gradient(to_bottom,black_85%,transparent)]"
+              : "bg-transparent backdrop-blur-none"
+            }`}
+        />
+
         <div className="container mx-auto px-4 md:px-8 pointer-events-auto">
           <Badge
             variant="outline"
