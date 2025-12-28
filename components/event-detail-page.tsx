@@ -52,14 +52,30 @@ export function EventDetailPage({ eventId, eventSlug }: EventDetailPageProps) {
   const [isPosterOpen, setIsPosterOpen] = useState(false)
   const [isCopied, setIsCopied] = useState(false)
   const [isSticky, setIsSticky] = useState(false)
+  const [showBackButton, setShowBackButton] = useState(true)
+  const [lastScrollY, setLastScrollY] = useState(0)
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsSticky(window.scrollY > 150)
+      const currentScrollY = window.scrollY
+      setIsSticky(currentScrollY > 150)
+
+      // Hide back button on scroll down, show on scroll up (mobile only behavior usually desired, but we can apply globally or check width)
+      // A threshold of 50px prevents jitter at extreme top
+      if (currentScrollY > 50) {
+        if (currentScrollY > lastScrollY) {
+          setShowBackButton(false)
+        } else {
+          setShowBackButton(true)
+        }
+      } else {
+        setShowBackButton(true)
+      }
+      setLastScrollY(currentScrollY)
     }
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+  }, [lastScrollY])
 
   const fetchEvent = async () => {
     console.log("Fetching event with ID:", eventId)
@@ -145,8 +161,7 @@ export function EventDetailPage({ eventId, eventSlug }: EventDetailPageProps) {
         <Image src={event.bannerImage || "/placeholder.svg"} alt={event.title} fill className="object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
-        {/* Fixed Floating Back Button */}
-        <div className="fixed top-12 left-4 z-50">
+        <div className={`fixed top-12 left-4 z-50 transition-transform duration-300 md:translate-y-0 ${showBackButton ? 'translate-y-0' : '-translate-y-[200%]'}`}>
           <Link href={event.status === "past" ? "/events/past-events" : "/events/upcoming"}>
             <Button variant="outline" size="sm" className="backdrop-blur-md bg-black/40 border-primary/30 text-white hover:bg-black/60">
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -154,15 +169,12 @@ export function EventDetailPage({ eventId, eventSlug }: EventDetailPageProps) {
             </Button>
           </Link>
         </div>
-
-        {/* Event Title Overlay - Moved below to handle sticky */}
       </div>
 
       {/* Sticky Event Title Bar */}
       <div
         className="sticky top-0 z-30 w-full -mt-24 md:-mt-32 pb-4 pt-4 md:pt-8 md:pb-8 transition-all duration-500 pointer-events-none"
       >
-        {/* Organic Background Layer */}
         <div
           className={`absolute inset-0 -z-10 transition-all duration-500
             ${isSticky
@@ -409,7 +421,6 @@ export function EventDetailPage({ eventId, eventSlug }: EventDetailPageProps) {
       </div>
 
       {/* Gallery Modal */}
-      {/* Gallery Modal */}
       {event.gallery && (
         <Lightbox
           open={isGalleryOpen}
@@ -426,9 +437,8 @@ export function EventDetailPage({ eventId, eventSlug }: EventDetailPageProps) {
       )}
 
       {/* Poster Modal */}
-      {/* Poster Modal */}
       <Dialog open={isPosterOpen} onOpenChange={setIsPosterOpen}>
-        <DialogContent className="max-w-5xl w-full h-[90vh] p-0 overflow-hidden bg-black border-none flex flex-col z-[150]" hideCloseButton>
+        <DialogContent className="max-w-5xl w-[calc(100%-2rem)] sm:w-full h-[80vh] sm:h-[90vh] p-0 overflow-hidden bg-black border-none flex flex-col z-[150] rounded-2xl md:rounded-2xl" hideCloseButton>
           <DialogTitle className="sr-only">Event Poster</DialogTitle>
           <div className="relative flex-1 min-h-0 w-full bg-black">
             <Button

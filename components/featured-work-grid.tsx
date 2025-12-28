@@ -69,18 +69,14 @@ export function FeaturedWorkGrid() {
           gallery: event.gallery!,
           date: event.date
         }))
-      setGalleries(galleryData)
+      setGalleries(galleryData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()))
     }
     else { console.error("Error fetching events:", res.error) }
   }
 
   useEffect(() => {
-
     fetchEvents()
-    //const interval = setInterval(fetchEvents, 5000)
-    //console.log("After: ", events)
 
-    // Mock data
     setMagazines([
       { id: "1", title: "Tech Weekly", issue: "#15", date: "2024-01-15" },
       { id: "2", title: "Innovation Digest", issue: "#12", date: "2024-01-08" },
@@ -88,8 +84,6 @@ export function FeaturedWorkGrid() {
       { id: "4", title: "Code Chronicles", issue: "#8", date: "2024-01-01" },
       { id: "5", title: "Code Chronicles", issue: "#10", date: "2024-01-01" },
     ])
-
-    //return () => clearInterval(interval)
   }, [])
 
   const EventCard = ({ event }: { event: Event }) => (

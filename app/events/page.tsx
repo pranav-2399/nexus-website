@@ -25,15 +25,12 @@ export default function EventPage() {
 
   const fetchEvents = async () => {
     const response = await fetch('/api/events')
-    console.log("request: ", response)
     const res = await response.json()
-    console.log("request: ", response.ok)
+
     if (response.ok) {
-      //setEvents(res.data)
       const data: Event[] = res.data
       setPastEvents(data.filter(event => event.status.toLowerCase() === 'past').sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()))
       setUpcomingEvents(data.filter(event => event.status.toLowerCase() === 'upcoming').sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()))
-      // Confirm which order of events
     }
     else { console.error("Error fetching events: ", res.error) }
   }

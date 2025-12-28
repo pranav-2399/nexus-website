@@ -42,7 +42,7 @@ export default function PastEventsPage() {
             <Button
               variant="outline"
               size="sm"
-              className="backdrop-panel border-primary/30 absolute left-0 top-0"
+              className="backdrop-panel border-primary/30 fixed top-6 left-6 z-50 md:absolute md:left-0 md:top-0"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Events

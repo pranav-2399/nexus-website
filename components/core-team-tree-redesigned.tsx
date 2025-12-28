@@ -138,7 +138,7 @@ export function CoreTeamTreeRedesigned() {
   )
 
   const DepartmentCard = ({ department }: { department: Department }) => (
-    <Card  className= {`backdrop-panel ${getColorClasses(department.color)} glow-hover cursor-pointer transition-all duration-300`}
+    <Card className={`backdrop-panel ${getColorClasses(department.color)} glow-hover cursor-pointer transition-all duration-300`}
       onClick={() => setSelectedDepartment(department)} >
       <CardContent className="p-6 text-center">
         <div className="flex justify-center mb-4">{department.icon}</div>
@@ -188,7 +188,7 @@ export function CoreTeamTreeRedesigned() {
 
         {/* Member Info Modal */}
         <Dialog open={!!selectedMember} onOpenChange={() => setSelectedMember(null)}>
-          <DialogContent className="modal-content max-w-md mx-4">
+          <DialogContent className="modal-content max-w-md mx-4 rounded-2xl md:rounded-2xl">
             <DialogHeader>
               <DialogTitle className="gradient-text">Team Member</DialogTitle>
             </DialogHeader>
@@ -242,7 +242,7 @@ export function CoreTeamTreeRedesigned() {
 
         {/* Department Modal */}
         <Dialog open={!!selectedDepartment} onOpenChange={() => setSelectedDepartment(null)}>
-          <DialogContent className="modal-content max-w-4xl max-h-[85vh] flex flex-col mx-4">
+          <DialogContent className="modal-content w-[calc(100%-2rem)] md:w-full max-w-4xl max-h-[85vh] flex flex-col rounded-2xl md:rounded-2xl">
             {selectedDepartment && (
               <div className="flex flex-col h-full">
                 {/* Fixed Header */}

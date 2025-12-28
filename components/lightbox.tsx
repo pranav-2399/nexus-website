@@ -69,7 +69,7 @@ export function Lightbox({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-5xl w-full h-[90vh] p-0 overflow-hidden bg-black border-none flex flex-col z-[150]">
+            <DialogContent className="max-w-5xl w-[calc(100%-2rem)] sm:w-full h-[80vh] sm:h-[90vh] p-0 overflow-hidden bg-black border-none flex flex-col z-[150] rounded-2xl">
                 <DialogTitle className="sr-only">Gallery Lightbox</DialogTitle>
 
                 {/* Main Image Area */}

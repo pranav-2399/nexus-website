@@ -198,7 +198,7 @@
   }
 
   .modal-content {
-    background: linear-gradient(135deg, rgba(15, 15, 35, 0.95) 0%, rgba(26, 26, 46, 0.95) 100%);
+    background: linear-gradient(135deg, rgba(15, 15, 35, 1) 0%, rgba(26, 26, 46, 1) 100%);
     border: 1px solid rgba(139, 92, 246, 0.3);
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   }

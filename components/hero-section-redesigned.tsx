@@ -97,11 +97,11 @@ export function HeroSectionRedesigned() {
       if (!ctx || !canvas) return 0
 
       ctx.save()
-      
+
       const logoHeight = isMobile ? 100 : 180
       const nexusWidth = logoHeight * 2
       const totalWidth = nexusWidth
-      
+
       ctx.translate(canvas.width / 2 - totalWidth / 2, canvas.height / 2 - logoHeight / 2 - 100)
 
       // Draw NEXUS text in bright purple for better visibility
@@ -143,7 +143,7 @@ export function HeroSectionRedesigned() {
         if (data[(y * canvas.width + x) * 4 + 3] > 128) {
           // Check if the particle is in the tagline area (below NEXUS)
           const isTagline = y > canvas.height / 2 + 50 // Adjust this value based on your layout
-          
+
           if (isTagline) {
             return {
               x: x,
@@ -158,28 +158,28 @@ export function HeroSectionRedesigned() {
           }
 
           // Calculate gradient color for NEXUS particles - brighter on mobile
-          const gradientColors = isMobile 
+          const gradientColors = isMobile
             ? ['#A855F7', '#C084FC', '#DDD6FE'] // Brighter gradient for mobile
             : ['#8b5cf6', '#a855f7', '#c084fc'] // Original gradient for desktop
           const logoHeight = isMobile ? 100 : 180
           const nexusWidth = logoHeight * 2
           const startX = canvas.width / 2 - nexusWidth / 2
           const endX = startX + nexusWidth
-          
+
           // Normalize position between 0 and 1
           const gradientPosition = Math.max(0, Math.min(1, (x - startX) / nexusWidth))
-          
+
           // Get the two colors to interpolate between
           const colorIndex = Math.min(Math.floor(gradientPosition * 2), 1)
           const nextColorIndex = Math.min(colorIndex + 1, 2)
           const localPosition = (gradientPosition * 2) % 1
-          
+
           const nexusColor = interpolateColor(
             gradientColors[colorIndex],
             gradientColors[nextColorIndex],
             localPosition
           )
-          
+
           return {
             x: x,
             y: y,
@@ -200,19 +200,19 @@ export function HeroSectionRedesigned() {
     function interpolateColor(color1: string, color2: string, factor: number) {
       const hex1 = color1.replace('#', '')
       const hex2 = color2.replace('#', '')
-      
+
       const r1 = parseInt(hex1.substring(0, 2), 16)
       const g1 = parseInt(hex1.substring(2, 4), 16)
       const b1 = parseInt(hex1.substring(4, 6), 16)
-      
+
       const r2 = parseInt(hex2.substring(0, 2), 16)
       const g2 = parseInt(hex2.substring(2, 4), 16)
       const b2 = parseInt(hex2.substring(4, 6), 16)
-      
+
       const r = Math.round(r1 + (r2 - r1) * factor)
       const g = Math.round(g1 + (g2 - g1) * factor)
       const b = Math.round(b1 + (b2 - b1) * factor)
-      
+
       return `rgb(${r}, ${g}, ${b})`
     }
 
@@ -258,7 +258,7 @@ export function HeroSectionRedesigned() {
           const moveY = Math.sin(angle) * force * 60
           p.x = currentX - moveX
           p.y = currentY - moveY
-          
+
           ctx.fillStyle = p.scatteredColor
         } else {
           p.x += (currentX - p.x) * 0.1
@@ -316,14 +316,14 @@ export function HeroSectionRedesigned() {
     const handleMouseMove = (e: MouseEvent) => {
       const canvas = canvasRef.current;
       if (!canvas) return;
-      
+
       const rect = canvas.getBoundingClientRect();
       const scaleX = canvas.width / rect.width;
       const scaleY = canvas.height / rect.height;
-      
+
       const x = (e.clientX - rect.left) * scaleX;
       const y = (e.clientY - rect.top) * scaleY;
-      
+
       setMousePosition({ x: e.clientX, y: e.clientY });
       mousePositionRef.current = { x, y };
     }
@@ -333,15 +333,15 @@ export function HeroSectionRedesigned() {
         e.preventDefault();
         const canvas = canvasRef.current;
         if (!canvas) return;
-        
+
         const rect = canvas.getBoundingClientRect();
         const scaleX = canvas.width / rect.width;
         const scaleY = canvas.height / rect.height;
-        
+
         const touch = e.touches[0];
         const x = (touch.clientX - rect.left) * scaleX;
         const y = (touch.clientY - rect.top) * scaleY;
-        
+
         setMousePosition({ x: touch.clientX, y: touch.clientY });
         mousePositionRef.current = { x, y };
       }
@@ -385,12 +385,12 @@ export function HeroSectionRedesigned() {
     }
   }, [])
 
-  const fetchPinnedEvents = async () =>{
+  const fetchPinnedEvents = async () => {
     try {
       const response = await fetch('api/events?isPinned=TRUE')
       const res = await response.json()
       const requiredData: PinnedEvent[] = res.data
-      if (response.ok) { 
+      if (response.ok) {
         //console.log("Required Data: ", requiredData[0])
         //setPinnedEvent(res.data[0])
         setPinnedEvents(requiredData)
@@ -402,61 +402,61 @@ export function HeroSectionRedesigned() {
   }
   // Mock pinned event
   useEffect(() => {
-/*     const mockPinnedEvent: PinnedEvent = {
-      id: "1",
-      title: "Annual Tech Symposium 2024",
-      description: "Join us for our biggest technical event featuring industry experts and innovation showcases.",
-      date: "2024-12-25",
-      time: "10:00 AM",
-    } */
+    /*     const mockPinnedEvent: PinnedEvent = {
+          id: "1",
+          title: "Annual Tech Symposium 2024",
+          description: "Join us for our biggest technical event featuring industry experts and innovation showcases.",
+          date: "2024-12-25",
+          time: "10:00 AM",
+        } */
 
     fetchPinnedEvents()
     //console.log("In useEffect: ", pinnedEvent)
-/*     const eventDate = new Date(`${mockPinnedEvent.date} ${mockPinnedEvent.time}`)
-    if (eventDate > new Date()) {
-      setPinnedEvent(mockPinnedEvent)
-    } */
+    /*     const eventDate = new Date(`${mockPinnedEvent.date} ${mockPinnedEvent.time}`)
+        if (eventDate > new Date()) {
+          setPinnedEvent(mockPinnedEvent)
+        } */
   }, [])
 
   // Countdown timer
-/*   useEffect(() => {
-    //console.log("Inside countdown useEffect: ", pinnedEvent)
-    if (!pinnedEvent) return
-
-    //console.log("Countdown useEffect: ")
-    const timer = setInterval(() => {
-      const eventDate = new Date(`${pinnedEvent.date}T${pinnedEvent.time}:00`)
-      console.log("event date:", eventDate)
-      const now = new Date()
-      console.log("now: ", now)
-      const difference = eventDate.getTime() - now.getTime()
-      console.log("time difference: ", difference)
-
-      if (difference > 0) {
-        console.log("days:", Math.floor(difference / (1000 * 60 * 60 * 24)))
-        console.log("hours:", Math.floor((difference / (1000 * 60 * 60)) % 24))
-        console.log("mins:", Math.floor((difference / 1000 / 60) % 60))
-        console.log("seconds:", Math.floor((difference / 1000) % 60))
-        setTimeLeft({
-          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-          minutes: Math.floor((difference / 1000 / 60) % 60),
-          seconds: Math.floor((difference / 1000) % 60),
-        })
-        //console.log("Time left: ", timeLeft)
-      } else {
-        console.log("Difference less than 0")
-        setTimeLeft(null)
-        setPinnedEvent(null)
+  /*   useEffect(() => {
+      //console.log("Inside countdown useEffect: ", pinnedEvent)
+      if (!pinnedEvent) return
+  
+      //console.log("Countdown useEffect: ")
+      const timer = setInterval(() => {
+        const eventDate = new Date(`${pinnedEvent.date}T${pinnedEvent.time}:00`)
+        console.log("event date:", eventDate)
+        const now = new Date()
+        console.log("now: ", now)
+        const difference = eventDate.getTime() - now.getTime()
+        console.log("time difference: ", difference)
+  
+        if (difference > 0) {
+          console.log("days:", Math.floor(difference / (1000 * 60 * 60 * 24)))
+          console.log("hours:", Math.floor((difference / (1000 * 60 * 60)) % 24))
+          console.log("mins:", Math.floor((difference / 1000 / 60) % 60))
+          console.log("seconds:", Math.floor((difference / 1000) % 60))
+          setTimeLeft({
+            days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+            hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+            minutes: Math.floor((difference / 1000 / 60) % 60),
+            seconds: Math.floor((difference / 1000) % 60),
+          })
+          //console.log("Time left: ", timeLeft)
+        } else {
+          console.log("Difference less than 0")
+          setTimeLeft(null)
+          setPinnedEvent(null)
+        }
+      }, 1000)
+      //console.log("Timer: ", timer)
+      //console.log("Time left: ", timeLeft)
+      return () => {
+        clearInterval(timer)
+        console.log("Executed clearInterval")
       }
-    }, 1000)
-    //console.log("Timer: ", timer)
-    //console.log("Time left: ", timeLeft)
-    return () => {
-      clearInterval(timer)
-      console.log("Executed clearInterval")
-    }
-  }, [pinnedEvent]) */
+    }, [pinnedEvent]) */
 
   // Generate particles in useEffect
   useEffect(() => {
@@ -490,7 +490,7 @@ export function HeroSectionRedesigned() {
         className="absolute inset-0 z-0"
         style={{ opacity: isMobile ? 0.4 : 0.8 }}
       />
-      
+
       <motion.div
         className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 text-center"
         style={{ y }}

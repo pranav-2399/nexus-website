@@ -13,16 +13,15 @@ export function FromTheDesk() {
 
   useEffect(() => {
     fetch("/api/teams/")
-    .then(res => res.json())
-    .then(data => {
-      /* console.log("data found via useffect"); */
-      console.log(data.teams.filter((x: { role: string }) => x.role.toLowerCase() === "president"))
-      setPresident(data.teams.filter((x: { role: string }) => x.role.toLowerCase() === "president")[0])
+      .then(res => res.json())
+      .then(data => {
+        /* console.log("data found via useffect"); */
+        setPresident(data.teams.filter((x: { role: string }) => x.role.toLowerCase() === "president")[0])
 
-      const board: TeamMember[] = []
-      data.teams.forEach((member: TeamMember) => { if (/president|head|secretary/i.test(member.role)){ board.push(member)}})
-      setBoardMembers(board)
-    })
+        const board: TeamMember[] = []
+        data.teams.forEach((member: TeamMember) => { if (/president|head|secretary/i.test(member.role)) { board.push(member) } })
+        setBoardMembers(board)
+      })
   }, [])
 
   return (
@@ -39,10 +38,10 @@ export function FromTheDesk() {
 
               <div className="flex items-start gap-4 md:gap-6">
                 <div className="relative w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden flex-shrink-0">
-                  <Image 
+                  <Image
                     src={president?.photo || "/placeholder.svg?height=80&width=80"}
-                    alt="President" 
-                    fill className="object-cover" 
+                    alt="President"
+                    fill className="object-cover"
                   />
                 </div>
 
@@ -88,7 +87,7 @@ export function FromTheDesk() {
                         className="relative w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden border-2 border-primary/30"
                       >
                         <Image
-                          src={ member.photo || `/placeholder.svg?height=40&width=40`}
+                          src={member.photo || `/placeholder.svg?height=40&width=40`}
                           alt={`Board member ${member.name}`}
                           fill
                           className="object-cover"
