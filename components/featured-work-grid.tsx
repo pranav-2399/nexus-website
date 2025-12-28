@@ -125,7 +125,7 @@ export function FeaturedWorkGrid() {
                 </Link>
               </Button>
             </div>
-            <div className="overflow-y-auto h-[300px] lg:h-[480px] max-h-[calc(60vh-80px)] lg:max-h-none pr-2 space-y-3 md:space-y-4 custom-scrollbar">
+            <div className="overflow-y-auto h-[300px] lg:h-[480px] max-h-[calc(60vh-80px)] lg:max-h-none px-6 py-6 space-y-3 md:space-y-4 custom-scrollbar">
               {pastEvents.map((event) => (
                 <EventCard key={event.id} event={event} />
               ))}
@@ -142,7 +142,7 @@ export function FeaturedWorkGrid() {
                 </Link>
               </Button>
             </div>
-            <div className="overflow-y-auto h-[300px] lg:h-[480px] max-h-[calc(60vh-80px)] lg:max-h-none pr-2 space-y-3 md:space-y-4 custom-scrollbar">
+            <div className="overflow-y-auto h-[300px] lg:h-[480px] max-h-[calc(60vh-80px)] lg:max-h-none px-6 py-6 space-y-3 md:space-y-4 custom-scrollbar">
               {upcomingEvents.length > 0 ? (
                 upcomingEvents.map((event) => (
                   <EventCard key={event.id} event={event} />
@@ -158,7 +158,7 @@ export function FeaturedWorkGrid() {
           {/* Split Box - Magazines & Gallery */}
           <div className="flex flex-col gap-4 lg:h-full">
             {/* Magazines Section */}
-            <div className="backdrop-panel rounded-2xl p-4 md:p-6 glow-effect h-[280px] overflow-y-auto flex flex-col">
+            <div className="backdrop-panel rounded-2xl p-4 md:p-6 glow-effect h-[280px] flex flex-col overflow-hidden">
               <div className="flex items-center justify-between mb-3 md:mb-4 flex-shrink-0">
                 <h2 className="text-lg md:text-xl font-bold gradient-text">📚 Magazines & Publications</h2>
                 <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80" asChild>
@@ -167,7 +167,7 @@ export function FeaturedWorkGrid() {
                   </Link>
                 </Button>
               </div>
-              <div className="overflow-y-auto h-[120px] md:h-[200px] max-h-[calc(50vh-80px)] md:max-h-none pr-2 space-y-2 md:space-y-3 custom-scrollbar lg:flex-1 lg:min-h-0">
+              <div className="overflow-y-auto flex-1 min-h-0 px-6 py-6 space-y-2 custom-scrollbar">
                 {magazines.map((magazine) => (
                   <Card key={magazine.id} className="backdrop-panel border-primary/20 glow-hover cursor-pointer p-2 md:p-3">
                     <div className="flex items-center gap-2 md:gap-3">
@@ -196,7 +196,7 @@ export function FeaturedWorkGrid() {
                   </Link>
                 </Button>
               </div>
-              <div className="overflow-y-auto h-[120px] md:h-[200px] max-h-[calc(50vh-80px)] md:max-h-none pr-2 space-y-2 md:space-y-3 custom-scrollbar lg:flex-1 lg:min-h-0">
+              <div className="overflow-y-auto flex-1 min-h-0 px-6 py-6 space-y-2 custom-scrollbar">
                 {galleries.map((gallery) => (
                   <Card
                     key={gallery.id}
