@@ -19,12 +19,13 @@ interface Event {
   gallery?: string[]
 }
 
-interface Magazine {
-  id: string
+interface NewsArticle {
   title: string
-  issue: string
-  date: string
-  thumbnail?: string
+  url: string
+  publishedAt: string
+  source: {
+    name: string
+  }
 }
 
 interface GalleryItem {
@@ -39,7 +40,8 @@ interface GalleryItem {
 export function FeaturedWorkGrid() {
   const [pastEvents, setPastEvents] = useState<Event[]>([])
   const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([])
-  const [magazines, setMagazines] = useState<Magazine[]>([])
+  const [news, setNews] = useState<NewsArticle[]>([])
+  const [loadingNews, setLoadingNews] = useState(true)
   const [galleries, setGalleries] = useState<GalleryItem[]>([])
   const [selectedGallery, setSelectedGallery] = useState<GalleryItem | null>(null)
 
@@ -74,16 +76,23 @@ export function FeaturedWorkGrid() {
     else { console.error("Error fetching events:", res.error) }
   }
 
+  const fetchNews = async () => {
+    try {
+      const response = await fetch("/api/news")
+      const data = await response.json()
+      if (data.articles) {
+        setNews(data.articles.slice(0, 5))
+      }
+    } catch (error) {
+      console.error("Error fetching news:", error)
+    } finally {
+      setLoadingNews(false)
+    }
+  }
+
   useEffect(() => {
     fetchEvents()
-
-    setMagazines([
-      { id: "1", title: "Tech Weekly", issue: "#15", date: "2024-01-15" },
-      { id: "2", title: "Innovation Digest", issue: "#12", date: "2024-01-08" },
-      { id: "3", title: "Code Chronicles", issue: "#8", date: "2024-01-01" },
-      { id: "4", title: "Code Chronicles", issue: "#8", date: "2024-01-01" },
-      { id: "5", title: "Code Chronicles", issue: "#10", date: "2024-01-01" },
-    ])
+    fetchNews()
   }, [])
 
   const EventCard = ({ event }: { event: Event }) => (
@@ -151,32 +160,40 @@ export function FeaturedWorkGrid() {
 
           {/* Split Box - Magazines & Gallery */}
           <div className="flex flex-col gap-4 lg:h-full">
-            {/* Magazines Section */}
+            {/* News Section */}
             <div className="backdrop-panel rounded-2xl p-4 md:p-6 glow-effect h-[280px] flex flex-col overflow-hidden">
               <div className="flex items-center justify-between mb-3 md:mb-4 flex-shrink-0">
-                <h2 className="text-lg md:text-xl font-bold gradient-text">📚 Magazines & Publications</h2>
+                <h2 className="text-lg md:text-xl font-bold gradient-text">📰 Tech News</h2>
                 <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80" asChild>
-                  <Link href="/publications">
+                  <a href="https://newsapi.org" target="_blank" rel="noopener noreferrer">
                     <ArrowRight className="h-4 w-4" />
-                  </Link>
+                  </a>
                 </Button>
               </div>
               <div className="overflow-y-auto flex-1 min-h-0 px-6 py-6 space-y-2 custom-scrollbar">
-                {magazines.map((magazine) => (
-                  <Card key={magazine.id} className="backdrop-panel border-primary/20 glow-hover cursor-pointer p-2 md:p-3">
-                    <div className="flex items-center gap-2 md:gap-3">
-                      <div className="w-8 h-8 md:w-10 md:h-10 bg-primary/20 rounded-lg flex items-center justify-center">
-                        <FileText className="h-4 w-4 md:h-5 md:w-5 text-primary" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-white text-xs md:text-sm truncate">{magazine.title}</h4>
-                        <p className="text-xs text-gray-400 truncate">
-                          {magazine.issue} • {new Date(magazine.date).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                  </Card>
-                ))}
+                {loadingNews ? (
+                  <div className="flex justify-center items-center h-full">
+                    <p className="text-sm text-gray-400">Loading news...</p>
+                  </div>
+                ) : (
+                  news.map((article, index) => (
+                    <a key={index} href={article.url} target="_blank" rel="noopener noreferrer" className="block">
+                      <Card className="backdrop-panel border-primary/20 glow-hover cursor-pointer p-2 md:p-3 transition-colors hover:bg-white/5">
+                        <div className="flex items-center gap-2 md:gap-3">
+                          <div className="w-8 h-8 md:w-10 md:h-10 bg-primary/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <FileText className="h-4 w-4 md:h-5 md:w-5 text-primary" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-medium text-white text-xs md:text-sm truncate">{article.title}</h4>
+                            <p className="text-xs text-gray-400 truncate">
+                              {article.source.name} • {new Date(article.publishedAt).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                      </Card>
+                    </a>
+                  ))
+                )}
               </div>
             </div>
 
