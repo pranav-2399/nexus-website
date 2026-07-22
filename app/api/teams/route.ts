@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabaseServer";
 
 export async function GET() {
-  const { data, error } = await supabase.from("clubMembers").select("*");
+  const { data, error } = await supabase.from("clubMembers").select("*").eq("year", "2025-26");
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   return NextResponse.json({ teams: data });

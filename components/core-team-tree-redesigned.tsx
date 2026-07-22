@@ -73,8 +73,60 @@ export function CoreTeamTreeRedesigned() {
   }, [])
 
   useEffect(() => {
+    const boardRoleOrder: Record<string, number> = {
+      "chairperson": 1,
+      "vice-chairperson": 2,
+      "general secretary": 3,
+      "joint secretary": 4,
+      "technical lead": 5,
+      "events lead": 6,
+    }
+
+    const sortedMembers = [...teamMembers].sort((a, b) => {
+      // Only sort Board Members
+      if (
+        a.department === "Board Members" &&
+        b.department === "Board Members"
+      ) {
+        const aOrder = boardRoleOrder[a.role.toLowerCase()] ?? 999
+        const bOrder = boardRoleOrder[b.role.toLowerCase()] ?? 999
+        return aOrder - bOrder
+      }
+
+      return 0 // Keep all other departments in their original order
+    })
+
+    const hasChanged = sortedMembers.some(
+      (member, index) => member.id !== teamMembers[index]?.id
+    )
+
+    if (hasChanged) {
+      setTeamMembers(sortedMembers)
+    }
+  }, [teamMembers])
+
+  useEffect(() => {
     // Group members by department
     const deptMap: Record<string, Department> = {}
+
+    const boardRoleOrder: Record <string, number> = {
+      "chairperson": 1,
+      "vice-chairperson": 2,
+      "vice chairperson": 2,
+      "vice-chariperson": 2, // handles typo if present in DB
+      "general secretary": 3,
+      "joint secretary": 4,
+      "technical lead": 5,
+      "events lead": 6,
+    }
+
+    const sortedBoardMembers = teamMembers
+      .filter((member) => member.department === "Board Members")
+      .sort((a, b) => {
+        const aOrder = boardRoleOrder[a.role.toLowerCase()] ?? 999
+        const bOrder = boardRoleOrder[b.role.toLowerCase()] ?? 999
+        return aOrder - bOrder
+      })
 
     teamMembers.forEach(member => {
       const deptName = member.department || "Other"
@@ -167,7 +219,7 @@ export function CoreTeamTreeRedesigned() {
               <Crown className="h-5 w-5 md:h-6 md:w-6 text-yellow-500 mr-2" />
               <h3 className="text-lg md:text-xl lg:text-2xl font-bold gradient-text">Board Members</h3>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 lg:gap-6">
               {teamMembers
                 .filter((member) => member.department === "Board Members")
                 .map((member) => (
@@ -176,14 +228,6 @@ export function CoreTeamTreeRedesigned() {
             </div>
           </div>
 
-          {/* Departments Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4 lg:gap-6">
-            {departments
-              .filter((department) => department.name !== "Board Members")
-              .map((department) => (
-                <DepartmentCard key={department.id} department={department} />
-              ))}
-          </div>
         </div>
 
         {/* Member Info Modal */}
@@ -240,72 +284,6 @@ export function CoreTeamTreeRedesigned() {
           </DialogContent>
         </Dialog>
 
-        {/* Department Modal */}
-        <Dialog open={!!selectedDepartment} onOpenChange={() => setSelectedDepartment(null)}>
-          <DialogContent className="modal-content w-[calc(100%-2rem)] md:w-full max-w-4xl max-h-[85vh] flex flex-col rounded-2xl md:rounded-2xl">
-            {selectedDepartment && (
-              <div className="flex flex-col h-full">
-                {/* Fixed Header */}
-                <div className="flex-shrink-0 pb-4 border-b border-primary/20">
-                  <DialogTitle className="gradient-text flex items-center gap-2 text-lg md:text-xl">
-                    {selectedDepartment?.icon}
-                    {selectedDepartment?.name}
-                  </DialogTitle>
-                </div>
-
-                {/* Scrollable Content */}
-                <div className="flex-1 overflow-y-auto custom-scrollbar mt-4 space-y-4 md:space-y-6">
-                  {/* Department Lead - Sticky */}
-                  {selectedDepartment.leads.length > 0 && (
-                    <div className="sticky top-0 bg-gradient-to-b from-[rgba(15,15,35,0.95)] to-[rgba(15,15,35,0.8)] backdrop-blur-sm z-10 pb-4">
-                      <h4 className="text-base md:text-lg font-semibold text-white mb-3 md:mb-4">Department Lead</h4>
-                      {/*<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">*/}
-                      <div className="flex flex-wrap justify-center gap-3 md:gap-4">
-                        {selectedDepartment.leads.map((lead) => (
-                          <MemberCard
-                            key={lead.id}
-                            member={lead}
-                            onClick={() => setSelectedMember(lead)}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Regular Members */}
-                  {selectedDepartment.members.length > 0 && (
-                    <div>
-                      <h4 className="text-base md:text-lg font-semibold text-white mb-3 md:mb-4">Team Members</h4>
-                      <div className="space-y-2">
-                        {selectedDepartment.members.map((member) => (
-                          <div
-                            key={member.id}
-                            className="flex items-center justify-between p-3 backdrop-panel rounded-lg"
-                          >
-                            <div>
-                              <span className="text-white font-medium text-sm md:text-base">{member.name}</span>
-                              <p className="text-xs md:text-sm text-gray-400">{member.role}</p>
-                            </div>
-                            {member.socialMedia?.find(sm => sm.platform === "LinkedIn") && (
-                              <a
-                                href={member.socialMedia.find(sm => sm.platform === "LinkedIn")?.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-primary hover:text-primary/80"
-                              >
-                                <Linkedin className="h-3 w-3 md:h-4 md:w-4" />
-                              </a>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </DialogContent>
-        </Dialog>
       </div>
       <style jsx global>{`
         .custom-scrollbar::-webkit-scrollbar {
